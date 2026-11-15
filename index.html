@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>moodify</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF8E7;--ink:#111;--blue:#2c6a9b;--card:#fffdf6;--line:#e2d9c0;--pink:#f4a6a0;--track:#e6e6e6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1b16;--ink:#f3ecd8;--blue:#7fb4de;--card:#27241d;--line:#3d3829;--track:#444}}
+:root[data-theme="dark"]{--bg:#1d1b16;--ink:#f3ecd8;--blue:#7fb4de;--card:#27241d;--line:#3d3829;--track:#444}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Poppins',system-ui,sans-serif;font-weight:300}
+.wrap{max-width:820px;margin:0 auto;padding:20px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px}
+.logo{font-family:'Josefin Sans',sans-serif;font-size:44px;color:var(--blue);line-height:1;display:flex;align-items:center;gap:12px}
+.logo small{display:block;font-size:12px;font-family:Poppins,sans-serif;color:var(--ink);text-align:right}
+.logo small b{color:var(--pink);font-weight:400}
+nav{display:flex;gap:6px}
+nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--ink);font:inherit;font-size:15px;padding:6px 10px;cursor:pointer}
+nav button.on{border-color:var(--blue);color:var(--blue)}
+h1{font-family:'Josefin Sans',sans-serif;font-weight:300;font-size:clamp(30px,6vw,48px);text-align:center;margin:36px 0 28px}
+.row{display:grid;grid-template-columns:120px 1fr 40px;align-items:center;gap:16px;margin:30px 0}
+.row label{font-size:19px}
+.sw{width:36px;height:36px;border-radius:6px;border:3px solid rgba(0,0,0,.35);transition:opacity .2s}
+input[type=range]{width:100%;accent-color:#0a74ff;height:6px}
+.scale{display:flex;justify-content:space-between;font-size:11px;opacity:.55;margin:-22px 56px 0 136px}
+.center{text-align:center;margin-top:36px}
+.btn{background:none;border:3px solid var(--blue);color:var(--ink);font:inherit;font-size:14px;padding:16px 44px;cursor:pointer}
+.btn:hover{background:var(--blue);color:var(--bg)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+.card h3{margin:0 0 8px;font-family:'Josefin Sans',sans-serif;font-weight:400;font-size:22px;color:var(--blue)}
+.card p{margin:0;line-height:1.6}
+.step{display:flex;gap:12px;margin-top:12px;line-height:1.5}
+.step i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--blue);color:var(--bg);font-style:normal;display:grid;place-items:center;font-size:13px}
+.hist{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.hist.h{opacity:.6;font-size:12px}
+.note{font-size:12px;opacity:.6;text-align:center;margin-top:30px}
+.hide{display:none}
+@media(max-width:560px){.row{grid-template-columns:1fr 36px;gap:6px 12px}.row label{grid-column:1/3}.row input{grid-column:1}.scale{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="logo">
+  <svg width="48" height="40" viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M4 8h20M38 8h6M4 20h6M24 20h20M4 32h22M40 32h4"/><circle cx="31" cy="8" r="5"/><circle cx="17" cy="20" r="5"/><circle cx="33" cy="32" r="5"/></svg>
+  <span>moodify<small>By <b>Stack Underflow</b></small></span>
+ </div>
+ <nav><button id="n-check" class="on">check-in</button><button id="n-journal">journal</button></nav>
+</header>
+
+<section id="check">
+ <h1>How are you feeling today?</h1>
+ <div class="row"><label for="happy">happiness</label><input type="range" id="happy" min="1" max="5" value="3"><div class="sw" id="s-happy" style="background:#8f9fe4"></div></div>
+ <div class="row"><label for="anger">anger</label><input type="range" id="anger" min="1" max="5" value="2"><div class="sw" id="s-anger" style="background:#db7b2b"></div></div>
+ <div class="row"><label for="anx">anxiousness</label><input type="range" id="anx" min="1" max="5" value="2"><div class="sw" id="s-anx" style="background:#a2c73f"></div></div>
+ <div class="center"><button class="btn" id="submit">submit &nbsp;→</button></div>
+</section>
+
+<section id="result" class="hide">
+ <h1>Here's what we noticed</h1>
+ <div class="card"><h3>How you're feeling</h3><p id="ack"></p></div>
+ <div class="card"><h3>A gentle next step</h3><p id="adv"></p></div>
+ <div class="card"><h3>Your route this week</h3><div id="route"></div></div>
+ <div class="center"><button class="btn" id="again">← new check-in</button></div>
+</section>
+
+<section id="journal" class="hide">
+ <h1>Your mood journal</h1>
+ <div class="card"><svg id="chart" viewBox="0 0 600 180" width="100%" role="img" aria-label="Mood trend"></svg></div>
+ <div class="card" id="list"></div>
+ <div class="center"><button class="btn" id="clear" style="padding:10px 26px">clear journal</button></div>
+</section>
+<p class="note">Prototype · advice is generated on-device (the full app calls Gemini) · entries stay in this browser</p>
+</div>
+<script>
+const $=id=>document.getElementById(id), KEY='moodify:journal';
+const COLS={happy:'#8f9fe4',anger:'#db7b2b',anx:'#a2c73f'};
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return mem}}
+let mem=[];
+function save(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}}
+['happy','anger','anx'].forEach(k=>{const f=()=>{$('s-'+k).style.opacity=.3+.14*$(k).value};$(k).oninput=f;f()});
+
+function show(v){['check','result','journal'].forEach(s=>$(s).classList.toggle('hide',s!==v));
+ $('n-check').classList.toggle('on',v!=='journal');$('n-journal').classList.toggle('on',v==='journal');
+ if(v==='journal')renderJournal();scrollTo(0,0)}
+$('n-check').onclick=()=>show('check');$('n-journal').onclick=()=>show('journal');$('again').onclick=()=>show('check');
+
+function advice(h,a,x){
+ let ack,adv,route;
+ if(h>=4&&a<=2&&x<=2){
+  ack="It's lovely to see you feeling so bright today. That warmth is worth savouring, and you've earned this calm, joyful moment.";
+  adv="Share it! Send a kind message to someone you care about, compliment a stranger, or invite a friend for a walk. Happiness grows when it's passed along.";
+  route=["Write down three things that made today good.","Reach out to one person with a genuine thank-you.","Notice what helped, so you can repeat it on harder days."];
+ }else if(x>=4||a>=4){
+  ack=(x>=4&&a>=4?"Feeling both anxious and angry is exhausting, and it makes sense that you're overwhelmed right now.":x>=4?"That much anxiety is really hard to carry. Please know you're not alone, and this feeling will pass.":"Your anger is telling you something matters. It's okay to feel it, and you deserve space to settle.");
+  adv="Try breathing in for four counts, out for six, five times. Then step away from screens, sip some water, and move gently. If this persists, consider talking with someone you trust.";
+  route=["Today: five slow breaths, then a 10-minute walk.","Tomorrow: jot down what's weighing on you and circle what you can control.","This week: talk with a friend, family member or professional about it."];
+ }else if(h<=2){
+  ack="It sounds like today feels heavy. Your feelings are valid, and being honest about them here is a caring step toward yourself.";
+  adv="Be kind to yourself in a small way: have something warm to drink, get a little sunlight, or listen to a favourite song. Then message someone you trust, even just to say hi.";
+  route=["Today: one small comforting act, like a warm drink or a shower.","Tomorrow: ten minutes outside in daylight.","This week: schedule time with someone who lifts you up."];
+ }else{
+  ack="You're somewhere in the middle today, with a bit of everything going on. That's completely human, and noticing it is a good start.";
+  adv="Pick one tiny thing to nudge your mood upward: stretch for two minutes, tidy one corner, or step outside for fresh air. Small shifts often add up to a lighter day.";
+  route=["Today: one two-minute stretch or fresh-air break.","Tomorrow: do something you enjoy, even for 15 minutes.","This week: check in again and see what changed."];
+ }
+ return{ack,adv,route}}
+
+$('submit').onclick=()=>{
+ const h=+$('happy').value,a=+$('anger').value,x=+$('anx').value,r=advice(h,a,x);
+ $('ack').textContent=r.ack;$('adv').textContent=r.adv;
+ $('route').innerHTML=r.route.map((s,i)=>`<div class="step"><i>${i+1}</i><span></span></div>`).join('');
+ [...$('route').querySelectorAll('span')].forEach((el,i)=>el.textContent=r.route[i]);
+ const j=load();j.push({t:Date.now(),h,a,x});save(j);show('result')};
+
+function renderJournal(){
+ const j=load(),svg=$('chart'),L=$('list');
+ if(!j.length){svg.innerHTML='<text x="300" y="95" text-anchor="middle" fill="currentColor" opacity=".6" font-size="14">No entries yet. Submit a check-in!</text>';L.innerHTML='';return}
+ const d=j.slice(-14),W=600,H=180,p=24,sx=i=>d.length<2?W/2:p+i*(W-2*p)/(d.length-1),sy=v=>H-p-(v-1)*(H-2*p)/4;
+ let s='';for(let v=1;v<=5;v++)s+=`<line x1="${p}" x2="${W-p}" y1="${sy(v)}" y2="${sy(v)}" stroke="currentColor" opacity=".12"/>`;
+ [['h',COLS.happy],['a',COLS.anger],['x',COLS.anx]].forEach(([k,c])=>{
+  s+=`<polyline fill="none" stroke="${c}" stroke-width="3" points="${d.map((e,i)=>sx(i)+','+sy(e[k])).join(' ')}"/>`+d.map((e,i)=>`<circle cx="${sx(i)}" cy="${sy(e[k])}" r="4" fill="${c}"/>`).join('')});
+ svg.innerHTML=s;
+ L.innerHTML='<div class="hist h"><span>When</span><span>Happy</span><span>Anger</span><span>Anxiety</span></div>'+
+  j.slice().reverse().map(e=>`<div class="hist"><span>${new Date(e.t).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span><span>${e.h}/5</span><span>${e.a}/5</span><span>${e.x}/5</span></div>`).join('')}
+$('clear').onclick=()=>{save([]);renderJournal()};
+</script>
+</body>
+</html>
